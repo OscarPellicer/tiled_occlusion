@@ -36,16 +36,16 @@ Some notes about `TiledOcclusion`:
 Here we can see some examples of attributions. Notice that when `k = [1,1,1]` `TiledOcclusion` == `Occlusion`; also, notice that in some images class `cock` is being predicted, while on others it is class `hen`, as indicated in the title:
 
 Using Captum's Occlusion (i.e. using TiledOcclusion with `k = [1,1,1]`):
-![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/media/occlusion_1.png)
-![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/media/occlusion_2.png)
-![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/media/occlusion_3.png)
-![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/media/occlusion_4.png)
+![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_1.png)
+![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_2.png)
+![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_3.png)
+![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_4.png)
 
 And using TiledOcclusion:
-![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/media/tiled_occlusion_1.png)
-![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/media/tiled_occlusion_2.png)
-![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/media/tiled_occlusion_3.png)
-![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/media/tiled_occlusion_4.png)
+![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_1.png)
+![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_2.png)
+![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_3.png)
+![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_4.png)
 
 As can be seen, `TiledOcclusion` generally produces smoother results than `Occlusion` (specially at higher resolutions) which also are much better aligned with our intution for how attributions should behave, i.e.: they better identify the parts of the image that seem to help the model differentiate the `hen` from the `cock`.
 
