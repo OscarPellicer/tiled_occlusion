@@ -1,6 +1,8 @@
-# TiledOcclusion
+# TiledOcclusion (+ FusionGrad)
 
 Tiled Occlusion is a simple attribution method based on standard Occlusion and implemented using Captum's interface.
+
+Additionally, this repository also includes a better implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
 
 ## Installation 
 To use, make sure to have the following dependencies installed:
