@@ -38,8 +38,8 @@ Here we can see some examples of attributions. Notice that when `k = [1,1,1]` `T
 Using Captum's Occlusion (i.e. using TiledOcclusion with `k = [1,1,1]`):
 ![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_1.png)
 ![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_2.png)
-![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_3.png)
-![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_4.png)
+![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_3b.png)
+![Using Occlusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/occlusion_4b.png)
 
 And using TiledOcclusion:
 ![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_1.png)
