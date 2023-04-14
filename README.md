@@ -21,7 +21,7 @@ git clone https://github.com/OscarPellicer/tiled_occlusion.git
 
 And then you can use it as any other Captum attribution method. E.g.:
 ```{python}
-from TiledOcclusion import TiledOcclusion
+from ExtraAttrib import TiledOcclusion
 tiled_occlusion= TiledOcclusion(model)
 attributions_tocc= tiled_occlusion.attribute(image, target=target, k=[1,2,2], window= [3,18,18])
 ```
