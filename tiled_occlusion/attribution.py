@@ -34,7 +34,7 @@ class TiledOcclusion(Occlusion):
         assert not isinstance(input, tuple), 'At the moment, having tuples of tensors as input is not supported'
         assert len(window) <= 4, 'Window can at maximum be a 4-value tuple, e.g. (c, t, x, y) or (c, x, y, z)'
         assert len(input.shape) == len(window) + 1, f'{len(input.shape)=} != {(1 + len(window))=} (i.e. batch size + len(window))'
-        assert window.shape == k.shape, f'{window.shape=} != {k.hape=}'
+        assert window.shape == k.shape, f'{window.shape=} != {k.shape=}'
         assert not np.any(window % k),\
             f'All elements in {window=} must be divisible by the elements in {k=}'
 
@@ -104,27 +104,28 @@ class FusionGrad:
             explanation = torch.zeros(n, m, *input.shape)
             original_weights = self.model.state_dict().copy()
         
-            if std > 0.: 
-                self._distribution = torch.distributions.normal.Normal(loc=mean, scale=std)
+            #if std > 0.: 
+                #self._distribution = torch.distributions.normal.Normal(loc=mean, scale=std)
             it = tqdm.auto.tqdm(range(n*m), desc="FusionGrad", disable=not show_progress)
             with it as pbar:
                 for i in range(n):
                     self.model.load_state_dict(original_weights)
                     if std > 0.: 
                         for layer in self.model.parameters():
+                            noise = torch.randn_like(layer) * std + mean
                             if additive_noise:
-                                layer.add_(self._distribution.sample(layer.size()).to(layer.device))
+                                layer.add_(noise)
                             else:
-                                layer.mul_(self._distribution.sample(layer.size()).to(layer.device))
+                                layer.mul_(noise)
                     for j in range(m):
-                        noise = torch.randn_like(input) * sg_std + sg_mean
+                        sg_noise = torch.randn_like(input) * sg_std + sg_mean
                         if sg_additive_noise: 
-                            inputs_noisy = input + noise
+                            inputs_noisy = input + sg_noise
                         else: 
-                            inputs_noisy = input * noise
+                            inputs_noisy = input * sg_noise
                         explanation[i][j] = self.attribution_method.attribute(inputs_noisy, 
                                                                               *args, target=target, **kwargs)
                         pbar.update()
 
             self.model.load_state_dict(original_weights)
-            return explanation.mean(axis=(0,1))# Move the entire content of ExtraAttrib.py here 
+            return explanation.mean(axis=(0,1))
