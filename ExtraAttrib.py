@@ -78,7 +78,8 @@ class FusionGrad:
     @log_usage()     
     def attribute(self, input, *args, target=0,
                   mean: float=0., std: float=0.02, sg_mean: float=0., sg_std: float=0.1, 
-                  n:int=10, m: int=10, additive_noise: bool=False, show_progress: bool=True, **kwargs):
+                  n:int=10, m: int=10, additive_noise: bool=True, sg_additive_noise: bool=False,
+                  show_progress: bool=True, **kwargs):
         '''
         Parameters
         ----------
@@ -88,9 +89,10 @@ class FusionGrad:
         std: Standard deviation normal distribution, from which noise added to weights is sampled
         sg_mean: Mean of normal distribution, from which noise added to inputs is sampled
         sg_std: Standard deviation normal distribution, from which noise added to inputs is sampled
-        n: Number of types noise for weights is sampled
-        m: Number of types noise for inputs is sampled
-        additive_noise: Noise type, either use additive (if True) or multiplicative (if False)
+        n: Number of times noise for weights is sampled
+        m: Number of times noise for inputs is sampled
+        additive_noise: Noise type, either use additive (if True) or multiplicative (if False). Original implementation uses True
+        sg_additive_noise: Noise type for input signal, either use additive (if True) or multiplicative (if False).
         show_progress: Indicates whether progress bar should be displayed, default=True
 
         Returns
@@ -104,7 +106,7 @@ class FusionGrad:
         
             if std > 0.: 
                 self._distribution = torch.distributions.normal.Normal(loc=mean, scale=std)
-            it = tqdm.tqdm(range(n*m), desc="FusionGrad", disable=not show_progress)
+            it = tqdm.auto.tqdm(range(n*m), desc="FusionGrad", disable=not show_progress)
             with it as pbar:
                 for i in range(n):
                     self.model.load_state_dict(original_weights)
@@ -116,7 +118,7 @@ class FusionGrad:
                                 layer.mul_(self._distribution.sample(layer.size()).to(layer.device))
                     for j in range(m):
                         noise = torch.randn_like(input) * sg_std + sg_mean
-                        if additive_noise: 
+                        if sg_additive_noise: 
                             inputs_noisy = input + noise
                         else: 
                             inputs_noisy = input * noise

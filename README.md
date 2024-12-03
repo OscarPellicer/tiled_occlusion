@@ -4,24 +4,28 @@ Tiled Occlusion is a simple attribution method based on standard Occlusion and i
 
 Additionally, this repository also includes a better implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
 
-## Installation 
-To use, make sure to have the following dependencies installed:
+## Installation
+
+You can install directly using pip:
 
 ```{bash}
-pip install torch torchvision captum "matplotlib<3.7"
+pip install git+https://github.com/OscarPellicer/tiled_occlusion.git
 ```
 
-Then simply clone the repo into your project's path:
+Or for development, clone the repository and install in editable mode:
 
 ```{bash}
 git clone https://github.com/OscarPellicer/tiled_occlusion.git
+cd tiled_occlusion
+pip install -e .
 ```
 
 ## Examples
 
 And then you can use it as any other Captum attribution method. E.g.:
+
 ```{python}
-from ExtraAttrib import TiledOcclusion
+from tiled_occlusion import TiledOcclusion, FusionGrad
 tiled_occlusion= TiledOcclusion(model)
 attributions_tocc= tiled_occlusion.attribute(image, target=target, k=[1,2,2], window= [3,18,18])
 ```
@@ -29,11 +33,12 @@ attributions_tocc= tiled_occlusion.attribute(image, target=target, k=[1,2,2], wi
 For a full woring example, refer to the `Tutorial.ipynb`
 
 Some notes about `TiledOcclusion`:
- - If we set `k = [1,1,1]`, it is the same as using standard `Occlusion`
- - By using higher values of `k`, the resolution of the attribution gets increased by that factor `k`
- - `TiledOcclusion` supports from 1D to 4D tensors (without counting the batch dimension)
- - It has been designed to share the interface with Captum, as such it is possible to use Captum's `NoiseTunnel(TiledOcclusion(model))` on top
- - The computational costs are exactly the same as for the standard `Occlusion` for a given output resolution
+
+- If we set `k = [1,1,1]`, it is the same as using standard `Occlusion`
+- By using higher values of `k`, the resolution of the attribution gets increased by that factor `k`
+- `TiledOcclusion` supports from 1D to 4D tensors (without counting the batch dimension)
+- It has been designed to share the interface with Captum, as such it is possible to use Captum's `NoiseTunnel(TiledOcclusion(model))` on top
+- The computational costs are exactly the same as for the standard `Occlusion` for a given output resolution
 
 Here we can see some examples of attributions. Notice that when `k = [1,1,1]` `TiledOcclusion` == `Occlusion`; also, notice that in some images class `cock` is being predicted, while on others it is class `hen`, as indicated in the title:
 
