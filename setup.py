@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="tiled_occlusion",
-    version="0.1.0",
-    description="Tiled Occlusion attribution method based on Captum",
+    name="extra-attributions",
+    version="0.2.0",
+    description="Extra attribution methods based on Captum",
     author="Oscar Pellicer",
     author_email="",  # Add if desired
-    url="https://github.com/OscarPellicer/tiled_occlusion",
+    url="https://github.com/OscarPellicer/extra_attributions",
     packages=find_packages(),
     install_requires=[
         "torch",

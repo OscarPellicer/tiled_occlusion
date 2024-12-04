@@ -1,8 +1,9 @@
-# TiledOcclusion (+ FusionGrad)
+# extra_attributions
 
-Tiled Occlusion is a simple attribution method based on standard Occlusion and implemented using Captum's interface.
+This repo currently includes two attribution methods:
 
-Additionally, this repository also includes a better implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
+- Tiled Occlusion is a simple attribution method built upon standard Occlusion and implemented using Captum's interface.
+- FusionGrad is an implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
 
 ## Installation
 
@@ -20,15 +21,28 @@ cd tiled_occlusion
 pip install -e .
 ```
 
-## Examples
+## Usage
 
-And then you can use it as any other Captum attribution method. E.g.:
+You can use the attribution methods as any other Captum attribution method. E.g.:
 
 ```{python}
 from tiled_occlusion import TiledOcclusion, FusionGrad
+from captum.attr import IntegratedGradients
+
+# TiledOcclusion
 tiled_occlusion= TiledOcclusion(model)
 attributions_tocc= tiled_occlusion.attribute(image, target=target, k=[1,2,2], window= [3,18,18])
+
+# FusionGrad
+integrated_gradients = IntegratedGradients(model)
+fusiongrad= FusionGrad(integrated_gradients, model=model)
+attributions_ig_fg= fusiongrad.attribute(image, target=target,
+                            std=0.05, mean=1., n=5, additive_noise=False, #Weight noise (mult)
+                            sg_std=1.5, m=5, sg_additive_noise=True, #Input noise (add)
+                                         )
 ```
+
+## TiledOcclusion
 
 For a full woring example, refer to the `Tutorial.ipynb`
 
@@ -56,9 +70,13 @@ And using TiledOcclusion:
 
 As can be seen, `TiledOcclusion` generally produces smoother results than `Occlusion` (specially at higher resolutions) which also are much better aligned with our intution for how attributions should behave, i.e.: they better identify the parts of the image that seem to help the model differentiate the `hen` from the `cock`.
 
-## How does it work
+### How does it work
 
 The idea of the method is to combine the power of bigger occlusion patches while obtaining a high resolution smoother occlusion map, by adding occlusion results from several slightlhy shifted versions of the same input image. If you are using this repository and need more info on the method, open an issue and I will try to improve this description.
+
+## FusionGrad
+
+See the `Attribution_tests.ipynb` for an example of how to use `FusionGrad`, and the `README.md` in the [NoiseGrad repo](https://github.com/understandable-machine-intelligence-lab/NoiseGrad) for more details on the method.
 
 ## Citing
 
