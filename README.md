@@ -1,4 +1,4 @@
-# extra_attributions
+# extra-attributions
 
 This repo currently includes two attribution methods:
 
@@ -10,14 +10,14 @@ This repo currently includes two attribution methods:
 You can install directly using pip:
 
 ```{bash}
-pip install git+https://github.com/OscarPellicer/tiled_occlusion.git
+pip install git+https://github.com/OscarPellicer/extra-attributions.git
 ```
 
 Or for development, clone the repository and install in editable mode:
 
 ```{bash}
-git clone https://github.com/OscarPellicer/tiled_occlusion.git
-cd tiled_occlusion
+git clone https://github.com/OscarPellicer/extra-attributions.git
+cd extra-attributions
 pip install -e .
 ```
 
@@ -26,17 +26,17 @@ pip install -e .
 You can use the attribution methods as any other Captum attribution method. E.g.:
 
 ```{python}
-from tiled_occlusion import TiledOcclusion, FusionGrad
+from extra_attributions import TiledOcclusion, FusionGrad
 from captum.attr import IntegratedGradients
 
 # TiledOcclusion
 tiled_occlusion= TiledOcclusion(model)
-attributions_tocc= tiled_occlusion.attribute(image, target=target, k=[1,2,2], window= [3,18,18])
+attributions_tocc= tiled_occlusion.attribute(input, target=target, k=[1,2,2], window= [3,18,18])
 
 # FusionGrad
 integrated_gradients = IntegratedGradients(model)
 fusiongrad= FusionGrad(integrated_gradients, model=model)
-attributions_ig_fg= fusiongrad.attribute(image, target=target,
+attributions_ig_fg= fusiongrad.attribute(input, target=target,
                             std=0.05, mean=1., n=5, additive_noise=False, #Weight noise (mult)
                             sg_std=1.5, m=5, sg_additive_noise=True, #Input noise (add)
                                          )
