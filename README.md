@@ -2,8 +2,9 @@
 
 This repo currently includes two attribution methods:
 
-- Tiled Occlusion is a simple attribution method built upon standard Occlusion and implemented using Captum's interface.
-- FusionGrad is an implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
+- `TiledOcclusion` is a simple attribution method built upon standard Occlusion and implemented using Captum's interface.
+- `FusionGrad` is an implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
+ - `ContrastiveAttribution` computes the attribution of the selected output feature minus the average of all other output features
 
 ## Installation
 
@@ -26,7 +27,7 @@ pip install -e .
 You can use the attribution methods as any other Captum attribution method. E.g.:
 
 ```{python}
-from extra_attributions import TiledOcclusion, FusionGrad
+from extra_attributions import TiledOcclusion, FusionGrad, ContrastiveAttribution
 from captum.attr import IntegratedGradients
 
 # TiledOcclusion
@@ -40,11 +41,23 @@ attributions_ig_fg= fusiongrad.attribute(input, target=target,
                             std=0.05, mean=1., n=5, additive_noise=False, #Weight noise (mult)
                             sg_std=1.5, m=5, sg_additive_noise=True, #Input noise (add)
                                          )
+                                         
+#ContrastiveAttribution (+ NoiseTunnel)
+ig = IntegratedGradients(model)
+contrastive_ig = ContrastiveAttribution(ig)
+noise_tunnel_ig = NoiseTunnel(ig)
+noise_tunnel_contrastive_ig = ContrastiveAttribution(noise_tunnel_ig)
+noise_tunnel_tocc = NoiseTunnel(TiledOcclusion(model))
+noise_tunnel_contrastive_tocc = ContrastiveAttribution(noise_tunnel_tocc)
+
+attributions_ig_nt_c = noise_tunnel_contrastive_ig.attribute(input, nt_samples=10, n_steps=10, nt_type='smoothgrad',
+                                      stdevs=1.5, internal_batch_size=5,
+                                      target=pred_label_idx)
 ```
 
 ## TiledOcclusion
 
-For a full woring example, refer to the `Tutorial.ipynb`
+<!-- For a full woring example, refer to the `Tutorial.ipynb`
 
 Some notes about `TiledOcclusion`:
 
@@ -66,17 +79,20 @@ And using TiledOcclusion:
 ![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_1.png)
 ![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_2.png)
 ![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_3.png)
-![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_4b.png)
+![Using TiledOcclusion](https://github.com/OscarPellicer/tiled_occlusion/blob/main/media/tiled_occlusion_4b.png) -->
 
-As can be seen, `TiledOcclusion` generally produces smoother results than `Occlusion` (specially at higher resolutions) which also are much better aligned with our intution for how attributions should behave, i.e.: they better identify the parts of the image that seem to help the model differentiate the `hen` from the `cock`.
 
-### How does it work
+The idea of the method is to combine the power of bigger occlusion patches while obtaining a high resolution smoother occlusion map, by adding occlusion results from several slightlhy shifted versions of the same input image. If you are using this repository and need more info on the method, open an issue and I will try to improve this description. `TiledOcclusion` generally produces smoother results than `Occlusion` (specially at higher resolutions) which also are better aligned with our intution for how attributions should behave.
 
-The idea of the method is to combine the power of bigger occlusion patches while obtaining a high resolution smoother occlusion map, by adding occlusion results from several slightlhy shifted versions of the same input image. If you are using this repository and need more info on the method, open an issue and I will try to improve this description.
+See `Attribution_tests.ipynb` for an example of how to use the method.
 
 ## FusionGrad
 
-See the `Attribution_tests.ipynb` for an example of how to use `FusionGrad`, and the `README.md` in the [NoiseGrad repo](https://github.com/understandable-machine-intelligence-lab/NoiseGrad) for more details on the method.
+A Captum interface to FusionGrad. See `Attribution_tests.ipynb` for an example of how to use `FusionGrad`, and the `README.md` in the [NoiseGrad repo](https://github.com/understandable-machine-intelligence-lab/NoiseGrad) for more details on the method.
+
+## ContrastiveAttribution
+
+It takes any attribution method, and computes the attribution of the selected output feature minus the average of all other output features (or just one, if given as input parameter). It does so by wrapping the model, and hence it is as efficient as computing a standard attribution. See `Attribution_tests.ipynb` for an example of how to use.
 
 ## Citing
 
