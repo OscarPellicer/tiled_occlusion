@@ -129,3 +129,67 @@ class FusionGrad:
 
             self.model.load_state_dict(original_weights)
             return explanation.mean(axis=(0,1))
+        
+
+class ContrastiveAttribution:
+    def __init__(self, attribution_method, model=None):
+        """
+        Parameters
+        ----------
+        attribution_method: The base attribution method to use (e.g., IntegratedGradients)
+        model: Optional model override. If None, will use attribution_method.forward_func
+        """
+        self.attribution_method = attribution_method
+        if model is None:
+            self.model = self.attribution_method.forward_func
+            assert isinstance(self.model, torch.nn.Module),\
+                'Model must either be passed explicitly or attribution_method.forward_func must be a torch Module'
+        else:
+            self.model = model
+        
+        # Create wrapper model that computes difference between target and negative_target
+        self.wrapper_model = self._create_difference_model()
+        
+        # Create new attribution method instance with wrapped model
+        self.attribution_method.model= self.wrapper_model
+
+    def _create_difference_model(self):
+        """Creates a wrapper model that returns the difference between two class outputs"""
+        class ModelWrapper(torch.nn.Module):
+            def __init__(self, base_model):
+                super().__init__()
+                self.base_model = base_model
+                self.target = None
+                self.negative_target = None
+                
+            def forward(self, x):
+                output = self.base_model(x)
+                if self.negative_target == 'other_classes':
+                    # Compute the average of all classes except the target
+                    other_classes_avg = (output.sum(dim=1, keepdim=True) - output[:, [self.target]]) / (output.size(1) - 1)
+                    return output[:, [self.target]] - other_classes_avg
+                else:
+                    return output[:, [self.target]] - output[:, [self.negative_target]]
+                
+        return ModelWrapper(self.model)
+
+    @log_usage()
+    def attribute(self, input, target=0, negative_target='other_classes', *args, **kwargs):
+        """
+        Parameters
+        ----------
+        input: Input to compute attributions for
+        target: Target class index
+        negative_target: Class index to contrast against, or 'other_classes' to use average of other classes
+        *args, **kwargs: Additional arguments passed to the base attribution method
+        
+        Returns
+        -------
+        Attributions for the difference between target and negative_target outputs
+        """
+        self.wrapper_model.target = target
+        self.wrapper_model.negative_target = negative_target
+        
+        # The wrapped attribution method now computes gradients for the difference
+        return self.attribution_method.attribute(input, target=0, *args, **kwargs)
+        return self.attribution_method.attribute(input, target=0, *args, **kwargs)
