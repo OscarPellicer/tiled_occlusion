@@ -1,6 +1,12 @@
 # extra-attributions
 
-This repo currently includes two attribution methods:
+
+This repo currently includes the following documents:
+
+- `XAI_Course_2024_OJPV.pdf`: slides for the XAI course
+- `Captum_Quantus_Tutorial.ipynb`: a tutorial on using Captum and Quantus
+
+I also propose three new (although not particularly intersting) attribution methods:
 
 - `TiledOcclusion` is a simple attribution method built upon standard Occlusion and implemented using Captum's interface.
 - `FusionGrad` is an implementation of [FusionGrad](https://github.com/understandable-machine-intelligence-lab/NoiseGrad), that more closely follows Captum's interface.
